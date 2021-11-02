@@ -1,6 +1,6 @@
-# Haluka Routing [`@haluka/routing`] 🚦
+# Haluka Routing [`@haluka/express-dispatcher`] 🚦
 
-**A powerful HTTP routing provider**
+**Express Based HTTP routing dispatcher for Haluka Framework**
 
 [![Node Version][node-image]][npm-link]
 [![npm][npm-version]][npm-link]
@@ -13,13 +13,12 @@
 [![GitHub watchers](https://img.shields.io/github/watchers/halukajs/routing.svg?style=social&label=Watch)](https://github.com/halukajs/routing/watchers)
 
 
-**Haluka Routing** is a routing provider used by Haluka framework (but can be used independently or with any other frameworks).
-If you are using any other framework and find this module useful, check out [haluka](https://haluka.dev) – they are like a gem together.
+**Haluka Express Dispatcher** is a router dispatcher designed for Haluka framework.
 
 ## Installation
 Installation of Haluka Routing is fairy easy. It can be installed from `npm` by:
 ```bash
-npm install @haluka/routing
+npm install @haluka/express-dispatcher
 ```
 
 ## License
