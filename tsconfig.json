@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+		"baseUrl": ".",
+		"paths": { "*": ["types/*"] },
+        "module": "commonjs",
+		"target": "ES2017",
+		"pretty": true,
+		"noUnusedLocals": true,
+		"noImplicitAny": false,
+		"noUnusedParameters": false,
+		"declaration": true,
+		"removeComments": false,
+        "moduleResolution": "node",
+        "sourceMap": true,
+		"outDir": "build",
+		"allowJs": true,
+        "preserveConstEnums": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"allowSyntheticDefaultImports": false,
+	},
+	"include": [
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"build",
+		"types",
+		"test",
+		"coverage"
+	]
+}	
