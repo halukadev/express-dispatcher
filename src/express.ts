@@ -36,9 +36,9 @@ export default class ExpressDispatcher extends RouterDispatcher<Express> impleme
         return (req: any, res: any) => {
             this.onRequest(req, res)
             let ret = action({req, res, Request: req, Response: res})
-            if (!res.headersSent) {
-                res.end(ret)
-            }
+            // if (!res.headersSent) {
+            //     res.end(ret)
+            // }
             this.onResponse(req, res, ret)
         }
     }
