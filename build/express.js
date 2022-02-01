@@ -26,6 +26,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
             next(createError(404));
         });
         express.use(async (err, req, res, next) => {
+            res.status(err.status);
             let resp = await this.errorHandler(err, req, res, next);
             await this.onResponse(req, res, resp);
             if (!res.writableEnded) {
@@ -44,6 +45,11 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 // Execute the action
                 let ret = await action({ req, res, Request: req, Response: res });
                 // TODO: fallback handler (when no response is sent)
+                if (!res.writableEnded) {
+                    if (ret)
+                        return res.send(ret);
+                    res.end(`Action for this route sent empty response.`);
+                }
                 // To provide custom response handlers
                 await this.onResponse(req, res, ret);
             }
