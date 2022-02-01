@@ -27,6 +27,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
         });
         express.use(async (err, req, res, next) => {
             let resp = await this.errorHandler(err, req, res, next);
+            await this.onResponse(req, res, resp);
             if (!res.writableEnded) {
                 if (!resp)
                     res.send(err);
