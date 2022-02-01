@@ -1,6 +1,6 @@
 {
   "name": "@haluka/express-dispatcher",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "A powerful HTTP routing provider",
   "main": "./build/express.js",
   "scripts": {
