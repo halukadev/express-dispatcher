@@ -4,16 +4,12 @@ import * as createError from 'http-errors'
 import { RouterDispatcher } from '@haluka/routing'
 import { IRouterDispatcher } from '@haluka/routing/build/Routing/RoutingEssentials'
 
+globalThis.httpError = createError
+
 export default abstract class ExpressDispatcher extends RouterDispatcher<Express> implements IRouterDispatcher {
 
     create (): Express {
         let app =  express()
-
-        if (this.errorHandler)
-            app.use(this.errorHandler)
-
-        globalThis.httpError = createError
-        
         return app
     }
 
@@ -34,6 +30,12 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
             next(createError(404))
         })
 
+        express.use((err: any, req: any, res: any, next: any) => {
+            let resp = this.errorHandler(err, req, res, next)
+            if (!resp) return next(err)
+            next(resp)
+        })
+
 		return express
     }
 
@@ -41,11 +43,11 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
 
     abstract onResponse (req: any, res: any, output: any): void
 
-    abstract errorHandler (err: any, req: any, res: any, next: any): void
+    abstract errorHandler (err: any, req: any, res: any, next: any): any
 
     protected wrap (action: Function) {
-        return async (req: any, res: any) => {
-            // try {
+        return async (req: any, res: any, next: CallableFunction) => {
+            try {
                 // To provide custom request handlers
                 this.onRequest(req, res)
                 // Execute the action
@@ -55,9 +57,9 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
 
                 // To provide custom response handlers
                 this.onResponse(req, res, ret)
-            // } catch (error) {
-                
-            // }
+            } catch (error) {
+                next(createError(error))
+            }
             
         }
     }
