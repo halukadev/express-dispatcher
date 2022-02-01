@@ -20,14 +20,18 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
             });
         }
         // For Handling 404
-        express.use(function (_req, _res, next) {
+        express.use(async (req, res, next) => {
+            // To provide custom request handlers
+            await this.onRequest(req, res);
             next(createError(404));
         });
         express.use(async (err, req, res, next) => {
             let resp = await this.errorHandler(err, req, res, next);
-            if (!resp)
-                return next(err);
-            next(resp);
+            if (!res.writableEnded) {
+                if (!resp)
+                    res.send(err);
+                res.send(resp);
+            }
         });
         return express;
     }
