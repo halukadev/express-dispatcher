@@ -26,14 +26,18 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
 		}
 
         // For Handling 404
-        express.use(function (_req: any, _res: any, next: (arg0: any) => void) {
+        express.use(async (req: any, res: any, next: any) => {
+            // To provide custom request handlers
+            await this.onRequest(req, res)
             next(createError(404))
         })
 
         express.use(async (err: any, req: any, res: any, next: any) => {
             let resp = await this.errorHandler(err, req, res, next)
-            if (!resp) return next(err)
-            next(resp)
+            if (!res.writableEnded) {
+                if (!resp) res.send(err);
+                res.send(resp);
+            }
         })
 
 		return express
