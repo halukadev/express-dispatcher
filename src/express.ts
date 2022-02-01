@@ -30,8 +30,8 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
             next(createError(404))
         })
 
-        express.use((err: any, req: any, res: any, next: any) => {
-            let resp = this.errorHandler(err, req, res, next)
+        express.use(async (err: any, req: any, res: any, next: any) => {
+            let resp = await this.errorHandler(err, req, res, next)
             if (!resp) return next(err)
             next(resp)
         })
@@ -39,9 +39,9 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
 		return express
     }
 
-    abstract onRequest (req: any, res: any): void
+    abstract onRequest (req: any, res: any): any
 
-    abstract onResponse (req: any, res: any, output: any): void
+    abstract onResponse (req: any, res: any, output: any): any
 
     abstract errorHandler (err: any, req: any, res: any, next: any): any
 
@@ -49,14 +49,14 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
         return async (req: any, res: any, next: CallableFunction) => {
             try {
                 // To provide custom request handlers
-                this.onRequest(req, res)
+                await  this.onRequest(req, res)
                 // Execute the action
                 let ret = await action({req, res, Request: req, Response: res})
 
                 // TODO: fallback handler (when no response is sent)
 
                 // To provide custom response handlers
-                this.onResponse(req, res, ret)
+                await this.onResponse(req, res, ret)
             } catch (error) {
                 next(createError(error))
             }

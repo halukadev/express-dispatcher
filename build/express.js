@@ -23,8 +23,8 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
         express.use(function (_req, _res, next) {
             next(createError(404));
         });
-        express.use((err, req, res, next) => {
-            let resp = this.errorHandler(err, req, res, next);
+        express.use(async (err, req, res, next) => {
+            let resp = await this.errorHandler(err, req, res, next);
             if (!resp)
                 return next(err);
             next(resp);
@@ -35,12 +35,12 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
         return async (req, res, next) => {
             try {
                 // To provide custom request handlers
-                this.onRequest(req, res);
+                await this.onRequest(req, res);
                 // Execute the action
                 let ret = await action({ req, res, Request: req, Response: res });
                 // TODO: fallback handler (when no response is sent)
                 // To provide custom response handlers
-                this.onResponse(req, res, ret);
+                await this.onResponse(req, res, ret);
             }
             catch (error) {
                 next(createError(error));
