@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/halukadev/express-dispatcher#readme",
   "devDependencies": {
+    "@haluka/routing": "github:halukajs/routing",
     "@types/chai": "^4.2.22",
     "@types/lodash": "^4.14.176",
     "@types/mocha": "^9.0.0",
@@ -39,7 +40,6 @@
     "ts-node": "^10.4.0"
   },
   "dependencies": {
-    "@haluka/routing": "github:halukajs/routing",
     "express": "^4.17.1",
     "http-errors": "^2.0.0"
   }
