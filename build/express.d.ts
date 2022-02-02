@@ -7,5 +7,5 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
     abstract onRequest(req: any, res: any): any;
     abstract onResponse(req: any, res: any, output: any): any;
     abstract errorHandler(err: any, req: any, res: any, next: any): any;
-    protected wrap(action: Function): (req: any, res: any, next: CallableFunction) => Promise<any>;
+    protected wrap(action: Function): (req: any, res: any, next: CallableFunction) => Promise<void>;
 }

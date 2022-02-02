@@ -47,8 +47,9 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 // TODO: fallback handler (when no response is sent)
                 if (!res.writableEnded) {
                     if (ret)
-                        return res.send(ret);
-                    res.end(`Action for this route sent empty response.`);
+                        res.send(ret);
+                    else
+                        res.end(`Action for this route sent empty response.`);
                 }
                 // To provide custom response handlers
                 await this.onResponse(req, res, ret);
