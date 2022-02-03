@@ -38,7 +38,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
             await this.onResponse(req, res, resp)
             if (!res.writableEnded) {
                 if (!resp) res.send(err)
-                res.send(resp)
+                else res.send(resp)
             }
         })
 
