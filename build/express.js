@@ -32,7 +32,8 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
             if (!res.writableEnded) {
                 if (!resp)
                     res.send(err);
-                res.send(resp);
+                else
+                    res.send(resp);
             }
         });
         return express;
