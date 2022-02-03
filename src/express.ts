@@ -36,7 +36,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
             res.status(err.status)
             let resp = await this.errorHandler(err, req, res, next)
             await this.onResponse(req, res, resp)
-            if (!res.writableEnded) {
+            if (!res.headersSent && !res.writableEnded) {
                 if (!resp) res.send(err)
                 else res.send(resp)
             }
@@ -59,8 +59,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
                 // Execute the action
                 let ret = await action({req, res, Request: req, Response: res})
 
-                // TODO: fallback handler (when no response is sent)
-                if (!res.writableEnded) {
+                if (!res.headersSent && !res.writableEnded) {
                     if (ret) 
                         res.send(ret)
                     else
