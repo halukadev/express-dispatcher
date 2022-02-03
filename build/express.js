@@ -29,7 +29,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
             res.status(err.status);
             let resp = await this.errorHandler(err, req, res, next);
             await this.onResponse(req, res, resp);
-            if (!res.writableEnded) {
+            if (!res.headersSent && !res.writableEnded) {
                 if (!resp)
                     res.send(err);
                 else
@@ -45,8 +45,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 await this.onRequest(req, res);
                 // Execute the action
                 let ret = await action({ req, res, Request: req, Response: res });
-                // TODO: fallback handler (when no response is sent)
-                if (!res.writableEnded) {
+                if (!res.headersSent && !res.writableEnded) {
                     if (ret)
                         res.send(ret);
                     else
