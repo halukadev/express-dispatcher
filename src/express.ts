@@ -13,7 +13,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
         return app
     }
 
-    dispatch (express: Express): Express {
+    dispatch (express: Express, timeout?: number): Express {
         for (const route of this.load()) {
             let middlewares = route.middlewares.map(m => {
                 return ExpressMiddleware.make(m)
@@ -21,7 +21,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
 
             route.methods.forEach(method => {
                 // TODO: where routing [conditions]
-                express[method.toLowerCase()](route.uri, ...middlewares, this.wrap(route.compiledAction)) 
+                express[method.toLowerCase()](route.uri, ...middlewares, this.wrap(route.compiledAction, timeout)) 
             });
 		}
 
@@ -46,7 +46,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
 
     abstract errorHandler (err: any, req: any, res: any, next: any): any
 
-    protected wrap (action: Function) {
+    protected wrap (action: Function, timeout?: number) {
         return async (req: any, res: any, next: CallableFunction) => {
             try {
                 // To provide custom request handlers
@@ -57,8 +57,12 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
                 if (!res.writableEnded) {
                     if (ret) 
                         res.send(ret)
-                    else
-                        res.end(`Action for this route sent empty response.`)
+                }
+                if (timeout) {
+                    setTimeout(() => {
+                        if (!res.writableEnded)
+                            res.end(`Action for this route sent empty response.`)
+                    }, timeout)
                 }
 
                 // To provide custom response handlers
