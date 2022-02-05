@@ -9,14 +9,14 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
         let app = express();
         return app;
     }
-    dispatch(express) {
+    dispatch(express, timeout) {
         for (const route of this.load()) {
             let middlewares = route.middlewares.map(m => {
                 return ExpressMiddleware.make(m);
             });
             route.methods.forEach(method => {
                 // TODO: where routing [conditions]
-                express[method.toLowerCase()](route.uri, ...middlewares, this.wrap(route.compiledAction));
+                express[method.toLowerCase()](route.uri, ...middlewares, this.wrap(route.compiledAction, timeout));
             });
         }
         // For Handling 404
@@ -31,7 +31,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
         });
         return express;
     }
-    wrap(action) {
+    wrap(action, timeout) {
         return async (req, res, next) => {
             try {
                 // To provide custom request handlers
@@ -41,8 +41,12 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 if (!res.writableEnded) {
                     if (ret)
                         res.send(ret);
-                    else
-                        res.end(`Action for this route sent empty response.`);
+                }
+                if (timeout) {
+                    setTimeout(() => {
+                        if (!res.writableEnded)
+                            res.end(`Action for this route sent empty response.`);
+                    }, timeout);
                 }
                 // To provide custom response handlers
                 await this.onResponse(req, res, ret);
