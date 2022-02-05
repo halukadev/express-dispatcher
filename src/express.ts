@@ -33,6 +33,7 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
         })
 
         express.use(async (err: any, req: any, res: any, next: any) => {
+            err.status = err.status || 500
             res.status(err.status)
             this.errorHandler(err, req, res, next)
         })
@@ -57,14 +58,15 @@ export default abstract class ExpressDispatcher extends RouterDispatcher<Express
                 if (!res.writableEnded) {
                     if (ret) 
                         res.send(ret)
+                    else {
+                        if (timeout) {
+                            setTimeout(() => {
+                                if (!res.writableEnded)
+                                    res.end(`Action for this route sent empty response.`)
+                            }, timeout)
+                        }
+                    }
                 }
-                if (timeout) {
-                    setTimeout(() => {
-                        if (!res.writableEnded)
-                            res.end(`Action for this route sent empty response.`)
-                    }, timeout)
-                }
-
                 // To provide custom response handlers
                 await this.onResponse(req, res, ret)
             } catch (error) {
