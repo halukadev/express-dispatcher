@@ -26,6 +26,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
             next(createError(404));
         });
         express.use(async (err, req, res, next) => {
+            err.status = err.status || 500;
             res.status(err.status);
             this.errorHandler(err, req, res, next);
         });
@@ -41,12 +42,14 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 if (!res.writableEnded) {
                     if (ret)
                         res.send(ret);
-                }
-                if (timeout) {
-                    setTimeout(() => {
-                        if (!res.writableEnded)
-                            res.end(`Action for this route sent empty response.`);
-                    }, timeout);
+                    else {
+                        if (timeout) {
+                            setTimeout(() => {
+                                if (!res.writableEnded)
+                                    res.end(`Action for this route sent empty response.`);
+                            }, timeout);
+                        }
+                    }
                 }
                 // To provide custom response handlers
                 await this.onResponse(req, res, ret);
