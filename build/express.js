@@ -27,14 +27,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
         });
         express.use(async (err, req, res, next) => {
             res.status(err.status);
-            let resp = await this.errorHandler(err, req, res, next);
-            await this.onResponse(req, res, resp);
-            if (!res.headersSent && !res.writableEnded) {
-                if (!resp)
-                    res.send(err);
-                else
-                    res.send(resp);
-            }
+            this.errorHandler(err, req, res, next);
         });
         return express;
     }
@@ -45,7 +38,7 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 await this.onRequest(req, res);
                 // Execute the action
                 let ret = await action({ req, res, Request: req, Response: res });
-                if (!res.headersSent && !res.writableEnded) {
+                if (!res.writableEnded) {
                     if (ret)
                         res.send(ret);
                     else
