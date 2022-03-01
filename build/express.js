@@ -38,18 +38,18 @@ class ExpressDispatcher extends routing_1.RouterDispatcher {
                 // To provide custom request handlers
                 await this.onRequest(req, res);
                 // Execute the action
-                let ret = await action({ req, res, Request: req, Response: res });
+                let ret = await action({ req, res, Request: req, Response: res, next });
                 if (!res.writableEnded) {
-                    if (ret)
-                        res.send(ret);
-                    else {
-                        if (timeout) {
-                            setTimeout(() => {
-                                if (!res.writableEnded)
-                                    res.end(`Action for this route sent empty response.`);
-                            }, timeout);
-                        }
+                    // if (ret !== undefined && ret !== null)
+                    //     res.send(ret)
+                    // else {
+                    if (timeout) {
+                        setTimeout(() => {
+                            if (!res.writableEnded)
+                                res.end(`Action for this route sent empty response.`);
+                        }, timeout);
                     }
+                    // }
                 }
                 // To provide custom response handlers
                 await this.onResponse(req, res, ret);
